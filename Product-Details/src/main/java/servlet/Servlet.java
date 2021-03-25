@@ -14,30 +14,43 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import product.Product;
+
 @WebServlet("/Servlet")
 public class Servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    public Servlet() {
-        super();
-    }
+	public Servlet() {
+		super();
+	}
 
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Product p = new Product();
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		HttpSession session = request.getSession();
+
+		List<Product> lists = (ArrayList<Product>) session.getAttribute("products");
 		
-		HttpSession session = request.getSession(true);
+
+		if (lists == null) {
+			lists = new ArrayList<Product>();
+		}
+
+		Product p = new Product();
+
 		p.setProduct(request.getParameter("product"));
 		p.setType(request.getParameter("type"));
-		p.setPrice(request.getParameter("price")); 
-		List<Product> list = new ArrayList<Product>();
-		list.add(p);
-		
-		session.setAttribute("products", list);
-		
+		p.setPrice(request.getParameter("price"));
+		lists.add(p);
+
+		// retrive product list from session
+
+		// session.setAttribute("products", lists);
+		// List<Product> list = new ArrayList<Product>();
+
+		session.setAttribute("products", lists);
+
 		RequestDispatcher rd = request.getRequestDispatcher("Display.jsp");
 		rd.forward(request, response);
-		
-		
+
 	}
 
 }
